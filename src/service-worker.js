@@ -1,29 +1,35 @@
 self.addEventListener('push', function(event) {
 	if (event.data) {
 
-		const promiseChain = fetch('http://mocker.egen.io/users')
-			.then(function(resp) {
-				return resp.json();
-			})
-			.then(function(data) {
-				return self.registration.showNotification(data[0].email + event.data.text(), {
-					body: 'This is hardcoded body! - ' +  Math.random(),
-					icon: '/assets/angular-js.png',
-					requireInteraction: true,
-					actions: [
-						{
-							action: 'show-more',
-							title: 'Show More'
-						},
-						{
-							action: 'ignore',
-							title: 'Ignore'
-						}
-					]
-				});
-			});
+		let data = event.data.json();
 
-		event.waitUntil(promiseChain);
+		// if you need to get data from server based on data
+		// object received
+
+		// const promiseChain = fetch('http://mocker.egen.io/users')
+		// 	.then(function(resp) {
+		// 		return resp.json();
+		// 	})
+
+		// event.waitUntil(promiseChain);
+
+		// plain old example
+
+		self.registration.showNotification(data.title, {
+			body: data.text,
+			icon: data.payload.icon || '/assets/angular-js.png',
+			requireInteraction: true,
+			actions: [
+				{
+					action: 'show-more',
+					title: 'Show More'
+				},
+				{
+					action: 'ignore',
+					title: 'Ignore'
+				}
+			]
+		});
 
 	} else {
 		console.log('This push event has no data.');
